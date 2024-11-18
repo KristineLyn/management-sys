@@ -6,13 +6,17 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100">
-    <nav class="bg-white border-b border-gray-200">
+<body class="bg-blue-50 text-gray-800 min-h-screen flex flex-col">
+    <!-- Navigation Bar -->
+    <nav class="bg-cyan-300 shadow-md">
         <div class="container mx-auto flex justify-between items-center py-4 px-6">
-            <a href="/" class="text-lg font-semibold text-gray-700">My Website</a>
-            <div x-data="{ open: false }" class="relative">
+            <!-- Logo -->
+            <a href="/" class="flex items-center">
+                <img src="{{ asset('images/main-logo.png') }}" alt="Main Logo" class="h-10">
+            </a>
+            <!-- Auth Navigation -->
+           <div x-data="{ open: false }" class="relative">
                 @auth
-                    <!-- Authenticated User Profile Image -->
                     <img 
                         src="{{ Auth::user()->profile_image ?? 'https://via.placeholder.com/40' }}" 
                         alt="Profile" 
@@ -31,15 +35,23 @@
                         </form>
                     </div>
                 @else
-                    <!-- Login and Register Buttons -->
-                    <a href="{{ route('login') }}" class="text-gray-700 hover:text-gray-900 px-4 py-2">Login</a>
+                    <a href="{{ route('login') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Login</a>
                     <a href="{{ route('register') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Register</a>
                 @endauth
             </div>
         </div>
     </nav>
-    <main class="container mx-auto py-6">
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto py-6 px-6">
         @yield('content')
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-cyan-400 text-black py-4 mt-8">
+        <div class="container mx-auto text-center text-sm">
+            &copy; {{ date('Y') }} {{ config('app.name', 'Management System') }}. All rights reserved.
+        </div>
+    </footer>
 </body>
 </html>
