@@ -33,7 +33,7 @@
                     <tr>
                         <td class="p-4">{{ $transaction->title }}</td>
                         <td class="p-4">{{ $transaction->category }}</td>
-                        <td class="p-4">${{ number_format($transaction->amount, 2) }}</td>
+                        <td class="p-4">Rp. {{ number_format($transaction->amount, 2) }}</td>
                         <td class="p-4">{{ $transaction->transaction_date->format('d M Y') }}</td>
                     </tr>
                 @empty

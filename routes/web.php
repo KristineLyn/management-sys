@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
+// Income routes
+Route::middleware('auth')->group(function () {
+    Route::post('/incomes', [IncomeController::class, 'store'])->name('incomes.store');
+    Route::get('/income-summary', [IncomeController::class, 'getIncomeSummary'])->name('incomes.summary');
+});
+
+Route::middleware(  ['auth'])->group(function () {
     Route::resource('transactions', TransactionController::class)->only(['index', 'create', 'store']);
 });
 

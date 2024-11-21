@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Notification;
+use App\Models\Income;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
@@ -61,6 +62,44 @@ class TransactionController extends Controller
 
     public function home()
     {
+        $userId = Auth::id();
+        $currentMonth = now()->startOfMonth();
+
+        // Fetch transactions grouped by category (optional for progress bar)
+        $transactionData = Transaction::where('user_id', $userId)
+        ->where('transaction_date','>=', $currentMonth)
+        ->selectRaw('category, SUM(amount) as total_amount')
+        ->groupBy('category')
+        ->get();
+
+        // Calculate total monthly income
+        $monthlyIncome = Income::where('user_id', $userId)
+            ->where('created_at', '>=',$currentMonth)
+            ->sum('amount');
+
+        // Calculate total monthly transactions
+        $monthlyTransactions = Transaction::where('user_id', $userId)
+            ->where('transaction_date', $currentMonth)
+            ->sum('amount');
+
+        // Fetch transactions grouped by category
+        $transactionData = Transaction::where('user_id', $userId)
+            ->where('transaction_date', '>=', $currentMonth)
+            ->selectRaw('category, SUM(amount) as total_amount')
+            ->groupBy('category')
+            ->get();
+
+        // Fetch total income
+        $totalIncome = Income::where('user_id', $userId)
+            ->where('created_at', '>=', $currentMonth)
+            ->sum('amount');
+        
+        // Fetch transaction data per category
+        $progressData = $transactionData->map(function ($item) use ($totalIncome) {
+            $item->percentage = $totalIncome > 0 ? ($item->total_amount / $totalIncome) * 100 : 0;
+            return $item;
+        });
+
         $recentTransactions = Transaction::where('user_id', Auth::id())
             ->orderBy('transaction_date', 'desc')
             ->take(3)
@@ -72,6 +111,13 @@ class TransactionController extends Controller
         ->get(['created_at', 'message']);
 
 
-        return view('home', compact('recentTransactions', 'recentNotifications'));
+        return view('home', compact(
+            'recentTransactions',
+            'recentNotifications',
+            'transactionData',
+            'totalIncome',
+            'progressData',
+            'monthlyIncome',
+            'monthlyTransactions'));
     }
 }

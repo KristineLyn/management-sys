@@ -2,89 +2,76 @@
 
 @section('content')
 <div class="container mx-auto py-12">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const incomeVsTransactionsCanvas = document.getElementById('incomeVsTransactionsChart');
+            if (incomeVsTransactionsCanvas) {
+                const monthlyIncome = @json($monthlyIncome, JSON_NUMERIC_CHECK);
+                const monthlyTransactions = @json($monthlyTransactions, JSON_NUMERIC_CHECK);
+
+                new Chart(incomeVsTransactionsCanvas.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: ['Income', 'Transactions'],
+                        datasets: [{
+                            data: [monthlyIncome, monthlyTransactions],
+                            backgroundColor: ['#4CAF50', '#F44336'],
+                        }]
+                    },
+                    options: {
+                        responsive: true, // Ensures responsiveness
+                        maintainAspectRatio: true, // Keeps the aspect ratio
+                        plugins: {
+                            legend: {
+                                position: 'top', // Position the legend below the chart
+                            },
+                        },
+                    },
+                });
+            } else {
+                console.error('Income vs Transactions chart canvas not found.');
+            }
+        });
+    </script>
     <!-- Overview Section -->
     <div class="bg-white shadow-lg rounded-lg p-6 mb-6 hover:shadow-xl transition-shadow">
         <h3 class="text-xl font-bold text-blue-900 text-center">Overview</h3>
-        <p class="text-gray-600 mt-2 text-center">A summary of key insights and activities.</p>
+        <p class="text-gray-600 mt-2 text-center">Your monthly financial summary.</p>
+        <p class="text-lg text-center mt-4">Total Income: ${{ $totalIncome }}</p>
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Pie Chart -->
+            <div class="p-6">
+                <div class="w-56 h-56 md:w-40 md:h-40 mx-auto">
+                    <canvas id="incomeVsTransactionsChart" class="max-w-full max-h-full"></canvas>
+                </div>
+            </div>
+            @foreach($progressData as $data)
+                <div class="m-4">
+                    <p>{{ $data->category }}: {{ round($data->percentage, 2) }}%</p>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div class="bg-blue-600 h-4 rounded-full" style="width: {{ $data->percentage }}%;"></div>
+                    </div>
+                </div>
+            @endforeach
+            <form action="{{ route('incomes.store') }}" method="POST" class="p-2 space-y-1">
+                <h4 class="p-2 text-lg font-semibold">Add Income</h4>
+                @csrf
+                <div>
+                    <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                    <input type="number" name="amount" id="amount" required
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Add Income</button>
+            </form>
+        </div>
     </div>
 
     <!-- Grid Section -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <!-- Real-Time Notifications -->
-        <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-shadow">
-            <h3 class="text-xl font-bold text-blue-900 text-center">Recent Notifications</h3>
-            <p class="text-gray-600 mt-2 text-center">Stay updated with the latest notifications.</p>
-
-            <div class="mt-4">
-                <table class="table-auto w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="p-4">Date</th>
-                            <th class="p-4">Message</th>
-                            <!-- <th class="p-4">Type</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($recentNotifications as $notification)
-                            <tr>
-                                <td class="p-4">{{ \Carbon\Carbon::parse($notification->created_at)->format('d M Y') }}</td>
-                                <td class="p-4">{{ $notification->message }}</td>
-                                <!-- <td class="p-4">{{ ucfirst($notification->type) }}</td> -->
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="p-4 text-center text-gray-500">No recent notifications available.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <!-- Button to Notifications Page -->
-            <div class="mt-4 text-center">
-                <a href="{{ route('notifications.index') }}" class="text-blue-800 rounded-lg py-2 px-4 hover:bg-blue-800 shadow-lg">
-                    View All Notifications
-                </a>
-            </div>
-        </div>
-
-        <!-- Data Management -->
-        <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-shadow">
-            <h3 class="text-xl font-bold text-blue-900 text-center">Data Management</h3>
-            <p class="text-gray-600 mt-2 text-center">Analyze and manage your data with ease.</p>
-
-            <!-- Recent Transactions -->
-            <div class="mt-4">
-                <table class="table-auto w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="p-4">Date</th>
-                            <th class="p-4">Title</th>
-                            <th class="p-4">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($recentTransactions as $transaction)
-                            <tr>
-                                <td class="p-4">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d M Y') }}</td>
-                                <td class="p-4">{{ $transaction->title }}</td>
-                                <td class="p-4">${{ number_format($transaction->amount, 2) }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="p-4 text-center text-gray-500">No recent transactions available.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Button to Transactions Page -->
-            <div class="mt-4 text-center">
-                <a href="{{ route('transactions.index') }}" class="text-blue-800 rounded-lg py-2 px-4 hover:bg-blue-800 shadow-lg">
-                    View All Transactions
-                </a>
-            </div>
-        </div>
+        <x-notification-layout :recent-notifications="$recentNotifications" />
+        <x-transaction-layout :recent-transactions="$recentTransactions" />
     </div>
 </div>
 @endsection
