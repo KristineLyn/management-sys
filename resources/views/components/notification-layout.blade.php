@@ -29,7 +29,7 @@
     </div>
     <!-- Button to Notifications Page -->
     <div class="mt-4 text-center">
-        <a href="{{ route('notifications.index') }}" class="text-blue-800 rounded-lg py-2 px-4 hover:bg-blue-800 shadow-lg">
+        <a href="{{ route('notifications.index') }}" class="text-blue-800 rounded-lg py-2 px-4 hover:bg-blue-200 shadow-lg">
             View All Notifications
         </a>
     </div>

@@ -16,7 +16,7 @@
                 <input type="number" step="0.01" name="amount" class="border rounded-lg p-2" placeholder="Amount" required>
                 <input type="date" name="transaction_date" class="border rounded-lg p-2" required>
             </div>
-            <button type="submit" class="text-blue-900 rounded-lg py-2 px-4 mt-4 shadow:lg">Save Transaction</button>
+            <button type="submit" class="text-blue-900 bg-white rounded-lg py-2 px-4 mt-4 shadow-lg">Save Transaction</button>
         </form>
     </div>
 </div>

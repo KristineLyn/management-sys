@@ -31,7 +31,7 @@
 
     <!-- Button to Transactions Page -->
     <div class="mt-4 text-center">
-        <a href="{{ route('transactions.index') }}" class="text-blue-800 rounded-lg py-2 px-4 hover:bg-blue-800 shadow-lg">
+        <a href="{{ route('transactions.index') }}" class="text-blue-800 rounded-lg py-2 px-4 hover:bg-blue-200 shadow-lg">
             View All Transactions
         </a>
     </div>

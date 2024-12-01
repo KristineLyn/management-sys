@@ -79,7 +79,7 @@ class TransactionController extends Controller
 
         // Calculate total monthly transactions
         $monthlyTransactions = Transaction::where('user_id', $userId)
-            ->where('transaction_date', $currentMonth)
+            ->where('transaction_date', '>=' ,$currentMonth)
             ->sum('amount');
 
         // Fetch transactions grouped by category

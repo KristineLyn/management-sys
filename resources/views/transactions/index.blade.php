@@ -14,7 +14,7 @@
             </select>
             <input type="date" name="start_date" value="{{ request('start_date') }}" class="border rounded-lg p-2" placeholder="Start Date">
             <input type="date" name="end_date" value="{{ request('end_date') }}" class="border rounded-lg p-2" placeholder="End Date">
-            <button type="submit" class="text-blue-900 rounded-lg py-2 px-4 shadow-lg ">Filter</button>
+            <button type="submit" class="col-span-3 text-center text-blue-900 rounded-lg py-2 px-4 shadow-lg ">Filter</button>
         </form>
     </div>
 
